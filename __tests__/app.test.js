@@ -4,7 +4,10 @@ const db = require('../db/connection.js');
 const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data')
 
-afterAll(() => db.end());
+afterAll(() => {
+if(db.end)
+return db.end();
+});
 
 beforeEach(() => seed(testData))
 

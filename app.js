@@ -3,7 +3,7 @@ const app = express();
 
 app.use(express.json());
 
-const {getTopics} = require('./controllers/controller.js');
+const {getTopics} = require('./controllers/topics.controller.js');
 
 app.get('/api/topics', getTopics);
 
