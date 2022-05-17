@@ -51,7 +51,7 @@ describe('2. GET /api/articles/:article_id', () => {
               })
         })
     })
-    test('status 404, returns an error when pass a non-existent id', () => {
+    test('status 404, returns an error when passed a non-existent id', () => {
         return request(app)
         .get('/api/articles/2675')
         .expect(404)
