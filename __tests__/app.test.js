@@ -3,7 +3,7 @@ const app = require('../app');
 const db = require('../db/connection.js');
 const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data');
-const { forEach } = require('../db/data/test-data/articles');
+
 
 afterAll(() => {
 return db.end();
@@ -133,11 +133,14 @@ describe('4. GET /api/users', () => {
         .get('/api/users')
         .expect(200)
         .then(({ body}) => {
+            console.log(body.user)
             expect(body).toBeInstanceOf(Object)
             expect(body.user).toBeInstanceOf(Array)
             expect(body.user).toHaveLength(4)
             body.user.forEach((user) => {
                 expect(typeof(user.username)).toBe('string')
+                expect(typeof(user.name)).toBe('string')
+                expect(typeof(user.avatar_url)).toBe('string')
             })
         })
     })
