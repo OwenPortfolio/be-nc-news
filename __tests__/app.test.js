@@ -133,7 +133,6 @@ describe('4. GET /api/users', () => {
         .get('/api/users')
         .expect(200)
         .then(({ body}) => {
-            console.log(body.user)
             expect(body).toBeInstanceOf(Object)
             expect(body.user).toBeInstanceOf(Array)
             expect(body.user).toHaveLength(4)
