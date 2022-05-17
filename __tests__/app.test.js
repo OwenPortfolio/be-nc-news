@@ -68,3 +68,51 @@ describe('2. GET /api/articles/:article_id', () => {
         })
     })
 })
+
+describe('3. PATCH /api/articles/:article_id', () => {
+    test('status: 200, successfully updates specified article votes', () => {
+        return request(app)
+        .patch('/api/articles/3')
+        .send({inc_votes: 100})
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.article).toBeInstanceOf(Object);
+            expect(body.article).toEqual( {
+                article_id: 3,
+                title: "Eight pug gifs that remind me of mitch",
+                topic: "mitch",
+                author: "icellusedkars",
+                body: "some gifs",
+                created_at: '2020-11-03T09:12:00.000Z',
+                votes: 100,
+              })
+        })
+    })
+    test('status 404, returns error when non existent id is passed', () => {
+        return request(app)
+        .patch('/api/articles/99999')
+        .send({inc_votes: 100})
+        .expect(404)
+        .then(({body}) =>{
+            expect(body.msg).toBe('No article with that ID');
+        })
+    })
+    test('status 400, returns error when invalid id is passed', () => {
+        return request(app)
+        .patch('/api/articles/batman')
+        .send({inc_votes: 100})
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+    test('status 400, returns an error when invalid patch made', () => {
+        return request(app)
+        .patch('/api/articles/3')
+        .send({hello: 'code checker'})
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+})
