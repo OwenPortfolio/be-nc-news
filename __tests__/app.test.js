@@ -127,13 +127,12 @@ describe('3. PATCH /api/articles/:article_id', () => {
     })
 })
 
-describe.only('4. GET /api/users', () => {
+describe('4. GET /api/users', () => {
     test('status: 200, returns an object containing an array of user objects', () => {
         return request(app)
         .get('/api/users')
         .expect(200)
         .then(({ body}) => {
-            console.log(body)
             expect(body).toBeInstanceOf(Object)
             expect(body.user).toBeInstanceOf(Array)
             expect(body.user).toHaveLength(4)
