@@ -141,4 +141,12 @@ describe('4. GET /api/users', () => {
             })
         })
     })
+    test('status: 404, returns error when passed a non existent path', () => {
+        return request(app)
+        .get('/api/doozers')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    })
 })
