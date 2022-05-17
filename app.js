@@ -5,14 +5,14 @@ app.use(express.json());
 
 const {getTopics} = require('./controllers/topics.controller.js');
 const {getArticleById, patchArticleVotes} = require('./controllers/articles.controller.js');
-
+const {getUsers} = require('./controllers/users.controller.js')
 
 app.get('/api/topics', getTopics);
 
 app.get('/api/articles/:article_id', getArticleById);
 app.patch('/api/articles/:article_id', patchArticleVotes);
 
-
+app.get('/api/users', getUsers);
 
 app.all('/*', (req, res) => {
     res.status(404).send({msg: 'Not Found'});
