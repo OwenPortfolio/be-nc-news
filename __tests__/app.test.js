@@ -2,7 +2,8 @@ const request = require('supertest');
 const app = require('../app');
 const db = require('../db/connection.js');
 const seed = require('../db/seeds/seed');
-const testData = require('../db/data/test-data')
+const testData = require('../db/data/test-data');
+const { forEach } = require('../db/data/test-data/articles');
 
 afterAll(() => {
 return db.end();
@@ -115,13 +116,30 @@ describe('3. PATCH /api/articles/:article_id', () => {
             expect(body.msg).toBe('Bad Request')
         })
     })
-    test('status 400, returns an error when invalid patch made', () => {
+    test('status 400, returns an error when patch data is formated correctly but data type is wrong', () => {
         return request(app)
         .patch('/api/articles/3')
         .send({inc_votes: 'hotdogs'})
         .expect(400)
         .then(({body}) => {
             expect(body.msg).toBe('Bad Request')
+        })
+    })
+})
+
+describe.only('4. GET /api/users', () => {
+    test('status: 200, returns an object containing an array of user objects', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({ body}) => {
+            console.log(body)
+            expect(body).toBeInstanceOf(Object)
+            expect(body.user).toBeInstanceOf(Array)
+            expect(body.user).toHaveLength(4)
+            body.user.forEach((user) => {
+                expect(typeof(user.username)).toBe('string')
+            })
         })
     })
 })
