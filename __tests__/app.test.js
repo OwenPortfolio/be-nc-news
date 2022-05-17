@@ -59,4 +59,12 @@ describe('2. GET /api/articles/:article_id', () => {
             expect(body.msg).toBe('No article with that ID');
         })
     })
+    test('status 400, returns an error when passed an invalid ID', () => {
+        return request(app)
+        .get('/api/articles/badid')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
 })
