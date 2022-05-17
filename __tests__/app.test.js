@@ -115,4 +115,13 @@ describe('3. PATCH /api/articles/:article_id', () => {
             expect(body.msg).toBe('Bad Request')
         })
     })
+    test('status 400, returns an error when invalid patch made', () => {
+        return request(app)
+        .patch('/api/articles/3')
+        .send({inc_votes: 'hotdogs'})
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
 })
