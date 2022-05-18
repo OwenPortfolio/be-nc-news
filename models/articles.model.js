@@ -24,6 +24,23 @@ exports.selectArticleById = (article_id) => {
     })
 }
 
+exports.selectArticleComments = (article_id) => {
+    return db
+    .query('SELECT comment_id, body, author, votes, created_at FROM comments WHERE article_id = $1', [article_id])
+    .then((comments) => {
+        console.log(comments)
+        if(!comments.rows[0]){
+            return Promise.reject({
+                status: 404,
+                msg: 'Not Found'
+            })
+        }
+        else {
+            return comments.rows;
+        }
+    })
+}
+
 exports.updateArticleVotes = (article_id, votes) => {
     if(Number.isInteger(votes)){
         return db
