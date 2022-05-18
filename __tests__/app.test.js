@@ -225,7 +225,7 @@ describe('7. GET /api/articles/:article_id/comments', () => {
         .get('/api/articles/1/comments')
         .expect(200)
         .then(({body}) => {
-            expect(body).toBeInstanceOf(Object)
+            expect(body.comments).toBeInstanceOf(Array)
             expect(body.comments).toHaveLength(11)
             body.comments.forEach((comment) => {
                 expect(typeof(comment.comment_id)).toBe('number')
@@ -237,12 +237,12 @@ describe('7. GET /api/articles/:article_id/comments', () => {
             expect()
         })
     })
-    test('status: 404, should return a message when no comments found', () => {
+    test('status: 200, should return an empty array when no comments found', () => {
         return request(app)
         .get('/api/articles/2/comments')
-        .expect(404)
+        .expect(200)
         .then(({body}) => {
-            expect(body.msg).toBe('Not Found')
+            expect(body.comments.length).toBe(0);
         })
     })
     test('status: 404, should return error when no such article_id', () => {
