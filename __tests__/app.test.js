@@ -190,6 +190,7 @@ describe('6. GET /api/articles - Retrieve all articles with comment count', () =
                 expect(typeof(Date.parse(article.created_at))).toBe('number')
                 expect(typeof(article.votes)).toBe('number')
                 expect(typeof(article.comment_count)).toBe('string')
+                expect(typeof(article.body)).toBe('undefined')
             })
         })
     })
