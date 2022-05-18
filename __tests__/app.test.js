@@ -41,7 +41,7 @@ describe('2. GET /api/articles/:article_id', () => {
         .expect(200)
         .then(({body}) => {
             expect(body).toBeInstanceOf(Object);
-            expect(body.article).toEqual({
+            expect(body.article).toEqual(expect.objectContaining({
                 article_id: 1,
                 title: 'Living in the shadow of a great man',
                 topic: 'mitch',
@@ -49,7 +49,7 @@ describe('2. GET /api/articles/:article_id', () => {
                 body: 'I find this existence challenging',
                 created_at: '2020-07-09T20:11:00.000Z',
                 votes: 100
-              })
+              }))
         })
     })
     test('status 404, returns an error when passed a non-existent id', () => {
@@ -149,6 +149,27 @@ describe('4. GET /api/users', () => {
         .expect(404)
         .then(({body}) => {
             expect(body.msg).toBe('Not Found')
+        })
+    })
+})
+
+describe('5. GET /api/articles/:article_id comment count', () => {
+    test('status: 200 article objects now contain comment counts', () => {
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.article).toBeInstanceOf(Object)
+            expect(body.article).toEqual(expect.objectContaining({
+                article_id: 1,
+                title: 'Living in the shadow of a great man',
+                topic: 'mitch',
+                author: 'butter_bridge',
+                body: 'I find this existence challenging',
+                created_at: '2020-07-09T20:11:00.000Z',
+                votes: 100,
+                comment_count: '11'
+              }))
         })
     })
 })
