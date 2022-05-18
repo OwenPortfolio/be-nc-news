@@ -173,3 +173,47 @@ describe('5. GET /api/articles/:article_id comment count', () => {
         })
     })
 })
+
+describe('6. GET /api/articles - Retrieve all articles with comment count', () => {
+    test('status: 200, should retrieve all articles and comment counts in array', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toBeInstanceOf(Object)
+            expect(body.articles).toHaveLength(12)
+            body.articles.forEach((article) => {
+                expect(typeof(article.article_id)).toBe('number')
+                expect(typeof(article.author)).toBe('string')
+                expect(typeof(article.title)).toBe('string')
+                expect(typeof(article.topic)).toBe('string')
+                expect(typeof(Date.parse(article.created_at))).toBe('number')
+                expect(typeof(article.votes)).toBe('number')
+                expect(typeof(article.comment_count)).toBe('string')
+            })
+        })
+    })
+    test('article author should be username', () => {
+        let usernames = ['rogersop', 'icellusedkars', 'butter_bridge', 'lurker']
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            body.articles.forEach((article) =>{
+                expect(usernames.includes(article.author)).toBe(true);
+            })
+        })
+    })
+    test('articles should be sorted by date', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            let lastDate = Date.parse('2020-11-03T09:12:00.001Z');
+            body.articles.forEach((article) => {
+                expect(Date.parse(article.created_at)).toBeLessThan(lastDate);
+                lastDate = Date.parse(article.created_at)
+            })
+        })
+    })
+})
