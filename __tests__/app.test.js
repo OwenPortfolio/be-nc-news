@@ -4,6 +4,7 @@ const db = require('../db/connection.js');
 const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data');
 
+require('jest-sorted');
 
 afterAll(() => {
 return db.end();
@@ -218,6 +219,7 @@ describe('6. GET /api/articles - Retrieve all articles with comment count', () =
         })
     })
 })
+
 describe('7. GET /api/articles/:article_id/comments', () => {
     test('status: 200, should retrieve an array of comments from a given article id', () => {
         let usernames = ['rogersop', 'icellusedkars', 'butter_bridge', 'lurker']
@@ -262,6 +264,7 @@ describe('7. GET /api/articles/:article_id/comments', () => {
         })
     })
 })
+
 describe('8. POST /api/articles/:article_id/comments', () => {
     test('status: 201, should create a new comment from passed username and body', () => {
         return request(app)
@@ -313,4 +316,16 @@ describe('8. POST /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe('Bad Request')
         })
     })
+})
+
+describe('9. GET /api/articles Queries', () => {
+    test('Status 200; should return all articles sorted by topic', () => {
+        return request(app)
+        .get('/api/articles?sort_by=topic&order=desc')
+        .expect(200)
+        .then(({body}) => {
+            let articles = body.articles;
+            expect(articles).toBeSortedBy('topic', { descending: true })
+        });
+    }) 
 })

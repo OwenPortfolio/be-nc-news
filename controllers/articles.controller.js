@@ -1,7 +1,21 @@
 const {selectArticles, selectArticleComments, selectArticleById, insertComment, updateArticleVotes} = require('../models/articles.model.js');
 
 exports.getArticles = (req, res, next) => {
-    selectArticles().then((articles) => {
+    let {sort_by, order, topic} = req.query;
+    
+    if(sort_by === undefined){
+        sort_by ='created_at';
+        }
+    if(order === undefined){
+        order = 'DESC'
+        }
+    if(topic === undefined){
+        topic = ''
+        }
+    else{
+        topic = `WHEN topic = ${topic}`
+        }
+    selectArticles(sort_by, order, topic).then((articles) => {
         res.status(200).send({ articles })
     })
 }
