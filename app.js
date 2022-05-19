@@ -43,12 +43,20 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
     if(err.code === '23503'){
         res.status(404)
-        if(err.constraint === 'comments_author_fkey'){
+        if(err.detail.endsWith('not present in table "users".')){
             res.send({msg: 'No Such User'})
         }
         else {
         res.send({msg: 'Article Not Found'})
         }
+    }
+    next(err);
+})
+
+app.use((err, req, res, next) => {
+    if(err.code === '23502'){
+        res.status(400)
+        res.send({msg: 'Bad Request'})
     }
     next(err);
 })

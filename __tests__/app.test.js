@@ -269,12 +269,12 @@ describe('8. POST /api/articles/:article_id/comments', () => {
         .send({username: 'butter_bridge', body: 'Magnificent'})
         .expect(201)
         .then(({body}) => {
-            expect(body.author).toBe('butter_bridge');
-            expect(body.body).toBe('Magnificent');
-            expect(body.votes).toBe(0);
-            expect(typeof Date.parse(body.create_at)).toBe('number');
-            expect(body.comment_id).toBe(19)
-            expect(body.article_id).toBe(2);
+            expect(body.comment.author).toBe('butter_bridge');
+            expect(body.comment.body).toBe('Magnificent');
+            expect(body.comment.votes).toBe(0);
+            expect(typeof(body.comment.created_at)).toBe('string');
+            expect(body.comment.comment_id).toBe(19)
+            expect(body.comment.article_id).toBe(2);
         })
     })
     test('status: 404, should return error when no article with that id', () => {
@@ -307,9 +307,10 @@ describe('8. POST /api/articles/:article_id/comments', () => {
     test('status: 400, should return an error when body is invalid', () => {
         return request(app)
         .post('/api/articles/2/comments')
-        .send({username: 'MrHandsome', body: 75 })
+        .send({username: 'butter_bridge', body: null  })
         .expect(400)
         .then(({body}) => {
+            console.log(body)
             expect(body.msg).toBe('Bad Request')
         })
     })

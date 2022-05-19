@@ -25,17 +25,11 @@ exports.selectArticleById = (article_id) => {
 }
 
 exports.insertComment = (commentData) => {
-        const {username, body, article_id} = commentData;
-        if(typeof username !== 'string' || typeof body != 'string'){
-            return Promise.reject({
-                status: 400,
-                msg: 'Bad Request'
-            })
-        }
-        return db.query('INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *;', [username, body, article_id])
-        .then((result) => {
-            return result.rows[0];
-        })
+    const {username, body, article_id} = commentData;
+    return db.query('INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *;', [username, body, article_id])
+    .then((result) => {
+        return result.rows[0];
+    })
 }
 
 exports.selectArticleComments = (article_id) => {

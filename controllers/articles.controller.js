@@ -25,7 +25,7 @@ exports.postComment = (req, res, next) => {
     commentData.article_id = req.params.article_id;
     insertComment(commentData)
     .then((comment) => {
-        res.status(201).send(comment)
+        res.status(201).send( { comment })
     })
     .catch((err) => {
         next(err)
