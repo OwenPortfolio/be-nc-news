@@ -13,7 +13,7 @@ exports.getArticles = (req, res, next) => {
         topic = ''
         }
     else{
-        topic = `WHEN topic = ${topic}`
+        topic = `WHERE articles.topic='${topic.replace("_","")}'`;
         }
     selectArticles(sort_by, order, topic).then((articles) => {
         res.status(200).send({ articles })

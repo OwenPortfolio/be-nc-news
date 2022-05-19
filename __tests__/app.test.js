@@ -324,8 +324,32 @@ describe('9. GET /api/articles Queries', () => {
         .get('/api/articles?sort_by=topic&order=desc')
         .expect(200)
         .then(({body}) => {
-            let articles = body.articles;
-            expect(articles).toBeSortedBy('topic', { descending: true })
+            expect(body.articles).toBeSortedBy('topic', { descending: true })
         });
+    })
+    test('status 200, should return all articles with chosen topic', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toEqual([{"article_id": 5, "author": "rogersop", "comment_count": "2", "created_at": "2020-08-03T13:14:00.000Z", "title": "UNCOVERED: catspiracy to bring down democracy", "topic": "cats", "votes": 0}])
+        })
     }) 
+    test('status 204, should return an empty array when topic does not exist', () => {
+        return request(app)
+        .get('/api/articles?topic=batman')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles.length).toBe(0)
+        })
+    })
+    test('status 400, should return bed request when invalid order chosen', () => {
+        return request(app)
+        .get('/api/articles?order=up')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    }
+    )
 })
