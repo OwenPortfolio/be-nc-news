@@ -218,3 +218,47 @@ describe('6. GET /api/articles - Retrieve all articles with comment count', () =
         })
     })
 })
+describe('7. GET /api/articles/:article_id/comments', () => {
+    test('status: 200, should retrieve an array of comments from a given article id', () => {
+        let usernames = ['rogersop', 'icellusedkars', 'butter_bridge', 'lurker']
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.comments).toBeInstanceOf(Array)
+            expect(body.comments).toHaveLength(11)
+            body.comments.forEach((comment) => {
+                expect(typeof(comment.comment_id)).toBe('number')
+                expect(typeof(comment.body)).toBe('string')
+                expect(typeof(comment.votes)).toBe('number')
+                expect(typeof(Date.parse(comment.created_at))).toBe('number')
+                expect(usernames.includes(comment.author)).toBe(true);
+            })
+            expect()
+        })
+    })
+    test('status: 200, should return an empty array when no comments found', () => {
+        return request(app)
+        .get('/api/articles/2/comments')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.comments.length).toBe(0);
+        })
+    })
+    test('status: 404, should return error when no such article_id', () => {
+        return request(app)
+        .get('/api/articles/999/comments')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    })
+    test('status: 400, should return an error when bad request made', () => {
+        return request(app)
+        .get('/api/articles/three/comments')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+})
