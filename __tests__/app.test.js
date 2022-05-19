@@ -262,3 +262,55 @@ describe('7. GET /api/articles/:article_id/comments', () => {
         })
     })
 })
+describe('8. POST /api/articles/:article_id/comments', () => {
+    test('status: 201, should create a new comment from passed username and body', () => {
+        return request(app)
+        .post('/api/articles/2/comments')
+        .send({username: 'butter_bridge', body: 'Magnificent'})
+        .expect(201)
+        .then(({body}) => {
+            expect(body.comment.author).toBe('butter_bridge');
+            expect(body.comment.body).toBe('Magnificent');
+            expect(body.comment.votes).toBe(0);
+            expect(typeof(body.comment.created_at)).toBe('string');
+            expect(body.comment.comment_id).toBe(19)
+            expect(body.comment.article_id).toBe(2);
+        })
+    })
+    test('status: 404, should return error when no article with that id', () => {
+        return request(app)
+        .post('/api/articles/99/comments')
+        .send({username: 'butter_bridge', body: 'Magnificent'})
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Article Not Found')
+        })
+    })
+    test('status: 400, should return error when invalid path', () => {
+        return request(app)
+        .post('/api/articles/nine/comments')
+        .send({username: 'butter_bridge', body: 'Magnificent'})
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+    test('status: 404, should return an error when username does not exist', () => {
+        return request(app)
+        .post('/api/articles/2/comments')
+        .send({username: 'MrHandsome', body: 'Even Better'})
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('No Such User')
+        })
+    })
+    test('status: 400, should return an error when body is invalid', () => {
+        return request(app)
+        .post('/api/articles/2/comments')
+        .send({username: 'butter_bridge', body: null  })
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+})

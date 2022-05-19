@@ -24,6 +24,14 @@ exports.selectArticleById = (article_id) => {
     })
 }
 
+exports.insertComment = (commentData) => {
+    const {username, body, article_id} = commentData;
+    return db.query('INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *;', [username, body, article_id])
+    .then((result) => {
+        return result.rows[0];
+    })
+}
+
 exports.selectArticleComments = (article_id) => {
     return db.query('SELECT * FROM articles WHERE article_id = $1', [article_id])
     .then((articles) => {

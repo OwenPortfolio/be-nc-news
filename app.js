@@ -4,14 +4,15 @@ const app = express();
 app.use(express.json());
 
 const {getTopics} = require('./controllers/topics.controller.js');
-const {getArticles, getArticleById, getArticleComments, patchArticleVotes} = require('./controllers/articles.controller.js');
+const {getArticles, getArticleById, getArticleComments, postComment, patchArticleVotes} = require('./controllers/articles.controller.js');
 const {getUsers} = require('./controllers/users.controller.js')
 
 app.get('/api/topics', getTopics);
 
 app.get('/api/articles', getArticles);
 app.get('/api/articles/:article_id', getArticleById);
-app.get('/api/articles/:article_id/comments', getArticleComments)
+app.get('/api/articles/:article_id/comments', getArticleComments);
+app.post('/api/articles/:article_id/comments', postComment);
 app.patch('/api/articles/:article_id', patchArticleVotes);
 
 app.get('/api/users', getUsers);
@@ -23,15 +24,42 @@ app.all('/*', (req, res) => {
 app.use((err, req, res, next) => {
     if(err.status && err.msg){
         res.status(err.status).send({msg: err.msg})
-    }
-    else if (err.code === '22P02'){
-       res.status(400)
-       res.send({msg: 'Bad Request'}) 
-    }
-    else if (!err) {
-        res.status(404)
-        res.send({msg: 'Not Found'})
+    } 
+    else {
+        next(err);
     }
 });
+
+app.use((err, req, res, next) => {
+    if (err.code === '22P02'){
+        res.status(400)
+        res.send({msg: 'Bad Request'}) 
+     }
+     else {
+         next(err);
+     }
+});
+
+app.use((err, req, res, next) => {
+    if(err.code === '23503'){
+        res.status(404)
+        if(err.detail.endsWith('not present in table "users".')){
+            res.send({msg: 'No Such User'})
+        }
+        else {
+        res.send({msg: 'Article Not Found'})
+        }
+    }
+    next(err);
+})
+
+app.use((err, req, res, next) => {
+    if(err.code === '23502'){
+        res.status(400)
+        res.send({msg: 'Bad Request'})
+    }
+    next(err);
+})
+
 
 module.exports = app;
