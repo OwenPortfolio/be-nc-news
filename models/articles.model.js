@@ -24,6 +24,37 @@ exports.selectArticleById = (article_id) => {
     })
 }
 
+exports.insertComment = (commentData) => {
+    return db.query('SELECT * FROM articles WHERE article_id = $1', [commentData.article_id])
+    .then((articles) => {
+        if(!articles.rows[0]){
+            return Promise.reject({
+                status: 404,
+                msg: 'Not Found'
+            })
+        }
+    })
+    .then(() => {
+        return db.query('SELECT * FROM users WHERE username = $1', [commentData.username])
+        .then((users) => {
+            if(!users.rows[0]){
+                return Promise.reject({
+                    status: 404,
+                    msg: 'No Such User'
+                })
+            }
+        })
+    })
+    .then(() => {
+        const {username, body, article_id} = commentData;
+        return db.query('INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *;', [username, body, article_id])
+        .then((result) => {
+            return result.rows[0];
+        })
+    })
+
+}
+
 exports.selectArticleComments = (article_id) => {
     return db.query('SELECT * FROM articles WHERE article_id = $1', [article_id])
     .then((articles) => {
