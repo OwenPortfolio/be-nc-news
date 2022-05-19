@@ -310,7 +310,6 @@ describe('8. POST /api/articles/:article_id/comments', () => {
         .send({username: 'butter_bridge', body: null  })
         .expect(400)
         .then(({body}) => {
-            console.log(body)
             expect(body.msg).toBe('Bad Request')
         })
     })
