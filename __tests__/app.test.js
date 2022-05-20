@@ -3,6 +3,7 @@ const app = require('../app');
 const db = require('../db/connection.js');
 const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data');
+const res = require('express/lib/response');
 
 require('jest-sorted');
 
@@ -395,7 +396,7 @@ describe('9. GET /api/articles Queries', () => {
         })
     })
     test('status: 200, should default to descending order when no query passed', () => {
-        return request(app)
+      return request(app)
         .get('/api/articles')
         .expect(200)
         .then(({body}) => {
@@ -415,3 +416,31 @@ describe('9. GET /api/articles Queries', () => {
         })
     })
 })
+
+describe('10. DELETE /api/comments/:comment_id', () => {
+    test('status:204, responds with an empty response body', () => {
+      return request(app)
+      .delete('/api/comments/2')
+      .expect(204)
+      .then(({body}) => {
+          expect(body.msg).toBe(undefined);
+      });
+    });
+    test('status:404, responds with an error when no such id', () => {
+        return request(app)
+        .delete('/api/comments/999999')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found');
+        });
+      });
+    test('status 400, should return error when format is invalid', () =>{
+        return request(app)
+        .delete('/api/comments/ilikecheese')
+        .expect(400)
+        .then(({body}) => {
+          expect(body.msg).toBe('Bad Request');
+        });
+      });
+  });
+
