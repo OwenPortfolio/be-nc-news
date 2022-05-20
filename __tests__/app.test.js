@@ -415,7 +415,7 @@ describe('10. DELETE /api/comments/:comment_id', () => {
             expect(body.msg).toBe('Not Found');
         });
       });
-    test('status 404, should return error when format is invalid', () =>{
+    test('status 400, should return error when format is invalid', () =>{
         return request(app)
         .delete('/api/comments/ilikecheese')
         .expect(400)
