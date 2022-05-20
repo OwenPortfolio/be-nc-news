@@ -376,4 +376,23 @@ describe('9. GET /api/articles Queries', () => {
             expect(body.msg).toBe('Bad Request')
         })
     })
+    test('status: 200, should retrieve all articles correctly', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch&sort_by=author&order=desc')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toBeInstanceOf(Object)
+            expect(body.articles).toHaveLength(11)
+            body.articles.forEach((article) => {
+                expect(typeof(article.article_id)).toBe('number')
+                expect(typeof(article.author)).toBe('string')
+                expect(typeof(article.title)).toBe('string')
+                expect(typeof(article.topic)).toBe('string')
+                expect(typeof(Date.parse(article.created_at))).toBe('number')
+                expect(typeof(article.votes)).toBe('number')
+                expect(typeof(article.comment_count)).toBe('string')
+                expect(typeof(article.body)).toBe('undefined')
+            })
+        })
+    })
 })
