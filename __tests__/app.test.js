@@ -351,16 +351,15 @@ describe('9. GET /api/articles Queries', () => {
             expect(body.articles).toEqual([{"article_id": 5, "author": "rogersop", "comment_count": "2", "created_at": "2020-08-03T13:14:00.000Z", "title": "UNCOVERED: catspiracy to bring down democracy", "topic": "cats", "votes": 0}])
         })
     }) 
-    test('status 204, should return an empty array when topic does not exist', () => {
+    test('status 404, should return an error when topic does not exist', () => {
         return request(app)
         .get('/api/articles?topic=batman')
-        .expect(200)
+        .expect(404)
         .then(({body}) => {
-            expect(body.articles.length).toBe(0)
-            expect(body.articles).toEqual([])
+            expect(body.msg).toBe('Not Found')
         })
     })
-    test('status 400, should return bed request when invalid order chosen', () => {
+    test('status 400, should return bad request when invalid order chosen', () => {
         return request(app)
         .get('/api/articles?order=up')
         .expect(400)
