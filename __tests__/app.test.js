@@ -327,6 +327,22 @@ describe('9. GET /api/articles Queries', () => {
             expect(body.articles).toBeSortedBy('topic', { descending: true })
         });
     })
+    test('Status 200; should return all articles sorted by topic in ascending order', () => {
+        return request(app)
+        .get('/api/articles?sort_by=topic&order=asc')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('topic', { ascending: true })
+        });
+    })
+    test('Status 200; should return all articles filtered by topic and sorted by author in ascending order', () => {
+        return request(app)
+        .get('/api/articles?sort_by=topic&order=asc&topic=mitch')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('topic', { ascending: true })
+        });
+    })
     test('status 200, should return all articles with chosen topic', () => {
         return request(app)
         .get('/api/articles?topic=cats')
@@ -341,6 +357,7 @@ describe('9. GET /api/articles Queries', () => {
         .expect(200)
         .then(({body}) => {
             expect(body.articles.length).toBe(0)
+            expect(body.articles).toEqual([])
         })
     })
     test('status 400, should return bed request when invalid order chosen', () => {
@@ -350,6 +367,14 @@ describe('9. GET /api/articles Queries', () => {
         .then(({body}) => {
             expect(body.msg).toBe('Bad Request')
         })
-    }
-    )
+    })
+    test('status 400, should return bed request when nonsense queries chosen', () => {
+        return request(app)
+        .get('/api/articles?pigs=true&order_lunch=soon')
+        .expect(400)
+        .then(({body}) => {
+            console.log(body)
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
 })

@@ -3,6 +3,17 @@ const {selectArticles, selectArticleComments, selectArticleById, insertComment, 
 exports.getArticles = (req, res, next) => {
     let {sort_by, order, topic} = req.query;
     
+    const validQueries = ['sort_by', 'order', 'topic']
+    const queries = Object.keys(req.query);
+
+    if(queries.length > 0){
+        queries.forEach((query) => {
+            if(validQueries.includes(query) === false){
+            return res.status(400).send({msg: 'Bad Request'})
+            }
+        })
+    }
+    
     if(sort_by === undefined){
         sort_by ='created_at';
         }
@@ -15,9 +26,9 @@ exports.getArticles = (req, res, next) => {
     else{
         topic = `WHERE articles.topic='${topic.replace("_","")}'`;
         }
-    selectArticles(sort_by, order, topic).then((articles) => {
-        res.status(200).send({ articles })
-    })
+    selectArticles(sort_by, order, topic)
+        .then((articles) => res.status(200).send({ articles }))
+        .catch(next)
 }
 
 exports.getArticleById = (req, res, next) => {
