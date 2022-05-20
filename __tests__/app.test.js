@@ -4,6 +4,7 @@ const db = require('../db/connection.js');
 const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data');
 
+require('jest-sorted');
 
 afterAll(() => {
 return db.end();
@@ -218,6 +219,7 @@ describe('6. GET /api/articles - Retrieve all articles with comment count', () =
         })
     })
 })
+
 describe('7. GET /api/articles/:article_id/comments', () => {
     test('status: 200, should retrieve an array of comments from a given article id', () => {
         let usernames = ['rogersop', 'icellusedkars', 'butter_bridge', 'lurker']
@@ -262,6 +264,7 @@ describe('7. GET /api/articles/:article_id/comments', () => {
         })
     })
 })
+
 describe('8. POST /api/articles/:article_id/comments', () => {
     test('status: 201, should create a new comment from passed username and body', () => {
         return request(app)
@@ -311,6 +314,104 @@ describe('8. POST /api/articles/:article_id/comments', () => {
         .expect(400)
         .then(({body}) => {
             expect(body.msg).toBe('Bad Request')
+        })
+    })
+})
+
+describe('9. GET /api/articles Queries', () => {
+    test('Status 200; should return all articles sorted by topic', () => {
+        return request(app)
+        .get('/api/articles?sort_by=topic&order=desc')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('topic', { descending: true })
+        });
+    })
+    test('Status 200; should return all articles sorted by topic in ascending order', () => {
+        return request(app)
+        .get('/api/articles?sort_by=topic&order=asc')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('topic', { ascending: true })
+        });
+    })
+    test('Status 200; should return all articles filtered by topic and sorted by author in ascending order', () => {
+        return request(app)
+        .get('/api/articles?sort_by=topic&order=asc&topic=mitch')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('topic', { ascending: true })
+        });
+    })
+    test('status 200, should return all articles with chosen topic', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toEqual([{"article_id": 5, "author": "rogersop", "comment_count": "2", "created_at": "2020-08-03T13:14:00.000Z", "title": "UNCOVERED: catspiracy to bring down democracy", "topic": "cats", "votes": 0}])
+        })
+    }) 
+    test('status 404, should return an error when topic does not exist', () => {
+        return request(app)
+        .get('/api/articles?topic=batman')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    })
+    test('status 400, should return bad request when invalid order chosen', () => {
+        return request(app)
+        .get('/api/articles?order=up')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+    test('status 400, should return bad request when nonsense queries chosen', () => {
+        return request(app)
+        .get('/api/articles?pigs=true&order_lunch=soon')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+    test('status: 200, should retrieve all articles correctly', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch&sort_by=author&order=desc')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toBeInstanceOf(Object)
+            expect(body.articles).toHaveLength(11)
+            body.articles.forEach((article) => {
+                expect(typeof(article.article_id)).toBe('number')
+                expect(typeof(article.author)).toBe('string')
+                expect(typeof(article.title)).toBe('string')
+                expect(typeof(article.topic)).toBe('string')
+                expect(typeof(Date.parse(article.created_at))).toBe('number')
+                expect(typeof(article.votes)).toBe('number')
+                expect(typeof(article.comment_count)).toBe('string')
+                expect(typeof(article.body)).toBe('undefined')
+            })
+        })
+    })
+    test('status: 200, should default to descending order when no query passed', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toBeInstanceOf(Object)
+            expect(body.articles).toHaveLength(12)
+            expect(body.articles).toBeSortedBy('created_at', { descending: true })
+            body.articles.forEach((article) => {
+                expect(typeof(article.article_id)).toBe('number')
+                expect(typeof(article.author)).toBe('string')
+                expect(typeof(article.title)).toBe('string')
+                expect(typeof(article.topic)).toBe('string')
+                expect(typeof(Date.parse(article.created_at))).toBe('number')
+                expect(typeof(article.votes)).toBe('number')
+                expect(typeof(article.comment_count)).toBe('string')
+                expect(typeof(article.body)).toBe('undefined')
+            })
         })
     })
 })

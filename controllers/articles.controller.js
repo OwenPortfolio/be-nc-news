@@ -1,9 +1,21 @@
 const {selectArticles, selectArticleComments, selectArticleById, insertComment, updateArticleVotes} = require('../models/articles.model.js');
 
 exports.getArticles = (req, res, next) => {
-    selectArticles().then((articles) => {
-        res.status(200).send({ articles })
-    })
+    let {sort_by, order, topic} = req.query;
+    const validQueries = ['sort_by', 'order', 'topic']
+    const queries = Object.keys(req.query);
+
+    if(queries.length > 0){
+        queries.forEach((query) => {
+            if(validQueries.includes(query) === false){
+            return res.status(400).send({msg: 'Bad Request'})
+            }
+        })
+    }
+
+    selectArticles(sort_by, order, topic)
+        .then((articles) => res.status(200).send({ articles }))
+        .catch(next)
 }
 
 exports.getArticleById = (req, res, next) => {
