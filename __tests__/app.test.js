@@ -368,7 +368,7 @@ describe('9. GET /api/articles Queries', () => {
             expect(body.msg).toBe('Bad Request')
         })
     })
-    test('status 400, should return bed request when nonsense queries chosen', () => {
+    test('status 400, should return bad request when nonsense queries chosen', () => {
         return request(app)
         .get('/api/articles?pigs=true&order_lunch=soon')
         .expect(400)
