@@ -79,6 +79,7 @@ describe('3. PATCH /api/articles/:article_id', () => {
         .send({inc_votes: 100})
         .expect(200)
         .then(({ body }) => {
+            console.log(body)
             expect(body.article).toBeInstanceOf(Object);
             expect(body.article).toEqual( {
                 article_id: 3,
@@ -225,10 +226,9 @@ describe('7. GET /api/articles/:article_id/comments', () => {
     test('status: 200, should retrieve an array of comments from a given article id', () => {
         let usernames = ['rogersop', 'icellusedkars', 'butter_bridge', 'lurker']
         return request(app)
-        .get('/api/articles/3/comments')
+        .get('/api/articles/1/comments')
         .expect(200)
         .then(({body}) => {
-            console.log(body)
             expect(body.comments).toBeInstanceOf(Array)
             expect(body.comments).toHaveLength(11)
             body.comments.forEach((comment) => {
