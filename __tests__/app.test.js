@@ -373,7 +373,6 @@ describe('9. GET /api/articles Queries', () => {
         .get('/api/articles?pigs=true&order_lunch=soon')
         .expect(400)
         .then(({body}) => {
-            console.log(body)
             expect(body.msg).toBe('Bad Request')
         })
     })
