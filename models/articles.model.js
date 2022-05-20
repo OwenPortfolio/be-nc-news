@@ -23,7 +23,7 @@ exports.selectArticles = (sort_by, order, topic) => {
         }
     }
 
-    if(order !== undefined && validOrder.includes(order)){
+    if(order !== undefined && validOrder.includes(order.toLowerCase())){
         queryStr+= '' + order + ' ';
     } else {
         if(order === undefined){
