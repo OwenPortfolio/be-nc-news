@@ -225,9 +225,10 @@ describe('7. GET /api/articles/:article_id/comments', () => {
     test('status: 200, should retrieve an array of comments from a given article id', () => {
         let usernames = ['rogersop', 'icellusedkars', 'butter_bridge', 'lurker']
         return request(app)
-        .get('/api/articles/1/comments')
+        .get('/api/articles/3/comments')
         .expect(200)
         .then(({body}) => {
+            console.log(body)
             expect(body.comments).toBeInstanceOf(Array)
             expect(body.comments).toHaveLength(11)
             body.comments.forEach((comment) => {
