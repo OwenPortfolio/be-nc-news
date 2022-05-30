@@ -72,7 +72,7 @@ app.use((err, req, res, next) => {
     next(err);
 })
 
-app.use('/*', (req, res) => {
+app.all('/*', (req, res) => {
     res.status(404).send({msg: 'Not Found'});
   });
 
