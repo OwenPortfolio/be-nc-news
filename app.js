@@ -7,6 +7,9 @@ const {getTopics} = require('./controllers/topics.controller.js');
 const {getArticles, getArticleById, getArticleComments, postComment, patchArticleVotes} = require('./controllers/articles.controller.js');
 const {getUsers} = require('./controllers/users.controller.js')
 const {deleteComment} = require('./controllers/comments.controller.js')
+const {getEndpoints} = require('./controllers/api.controller.js')
+
+app.get('/api', getEndpoints);
 
 app.get('/api/topics', getTopics);
 
