@@ -2,7 +2,6 @@ const {selectArticles, selectArticleComments, selectArticleById, insertComment, 
 
 exports.getArticles = (req, res, next) => {
     let {sort_by, order, topic} = req.query;
-    
     const validQueries = ['sort_by', 'order', 'topic']
     const queries = Object.keys(req.query);
 
@@ -13,19 +12,7 @@ exports.getArticles = (req, res, next) => {
             }
         })
     }
-    
-    if(sort_by === undefined){
-        sort_by ='created_at';
-        }
-    if(order === undefined){
-        order = 'DESC'
-        }
-    if(topic === undefined){
-        topic = ''
-        }
-    else{
-        topic = `WHERE articles.topic='${topic.replace("_","")}'`;
-        }
+
     selectArticles(sort_by, order, topic)
         .then((articles) => res.status(200).send({ articles }))
         .catch(next)

@@ -352,16 +352,15 @@ describe('9. GET /api/articles Queries', () => {
             expect(body.articles).toEqual([{"article_id": 5, "author": "rogersop", "comment_count": "2", "created_at": "2020-08-03T13:14:00.000Z", "title": "UNCOVERED: catspiracy to bring down democracy", "topic": "cats", "votes": 0}])
         })
     }) 
-    test('status 204, should return an empty array when topic does not exist', () => {
+    test('status 404, should return an error when topic does not exist', () => {
         return request(app)
         .get('/api/articles?topic=batman')
-        .expect(200)
+        .expect(404)
         .then(({body}) => {
-            expect(body.articles.length).toBe(0)
-            expect(body.articles).toEqual([])
+            expect(body.msg).toBe('Not Found')
         })
     })
-    test('status 400, should return bed request when invalid order chosen', () => {
+    test('status 400, should return bad request when invalid order chosen', () => {
         return request(app)
         .get('/api/articles?order=up')
         .expect(400)
@@ -396,6 +395,26 @@ describe('9. GET /api/articles Queries', () => {
             })
         })
     })
+    test('status: 200, should default to descending order when no query passed', () => {
+      return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toBeInstanceOf(Object)
+            expect(body.articles).toHaveLength(12)
+            expect(body.articles).toBeSortedBy('created_at', { descending: true })
+            body.articles.forEach((article) => {
+                expect(typeof(article.article_id)).toBe('number')
+                expect(typeof(article.author)).toBe('string')
+                expect(typeof(article.title)).toBe('string')
+                expect(typeof(article.topic)).toBe('string')
+                expect(typeof(Date.parse(article.created_at))).toBe('number')
+                expect(typeof(article.votes)).toBe('number')
+                expect(typeof(article.comment_count)).toBe('string')
+                expect(typeof(article.body)).toBe('undefined')
+            })
+        })
+    })
 })
 
 describe('10. DELETE /api/comments/:comment_id', () => {
@@ -415,7 +434,7 @@ describe('10. DELETE /api/comments/:comment_id', () => {
             expect(body.msg).toBe('Not Found');
         });
       });
-    test('status 404, should return error when format is invalid', () =>{
+    test('status 400, should return error when format is invalid', () =>{
         return request(app)
         .delete('/api/comments/ilikecheese')
         .expect(400)
@@ -424,6 +443,7 @@ describe('10. DELETE /api/comments/:comment_id', () => {
         });
       });
   });
+
 
 describe('11. GET/api', () => {
     test('Responds with a JSON describing the api endpoints', () => {
@@ -564,3 +584,4 @@ describe('11. GET/api', () => {
         })  
     })
 })
+
