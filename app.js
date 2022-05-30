@@ -23,9 +23,6 @@ app.delete('/api/comments/:comment_id', deleteComment);
 
 app.get('/api/users', getUsers);
 
-app.all('/*', (req, res) => {
-    res.status(404).send({msg: 'Not Found'});
-  });
 
 app.use((err, req, res, next) => {
     if(err.status && err.msg){
@@ -74,6 +71,11 @@ app.use((err, req, res, next) => {
     }
     next(err);
 })
+
+app.all('/*', (req, res) => {
+    res.status(404).send({msg: 'Not Found'});
+  });
+
 
 
 module.exports = app;
