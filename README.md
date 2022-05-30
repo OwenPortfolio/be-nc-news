@@ -6,11 +6,20 @@ Owen News API is a PostgreSQL articles and comments handling API using express. 
 
 # To Use: 
 
+This repo can be cloned from the github repo by navigating to your chosen directory and typing the following command line instruction:
+```
+git clone https://github.com/OwenPortfolio/be-nc-news
+```
+
+Dependencies can be installed by typing `npm i` in the install directory.
+
 This project uses dotenv and requires creating [.env.test] and [.env.development] files containing [PGDATABASE=<database_name_here] for your development and test databases. 
 
 For further information consult the dotenv documentation here: 
 
 (https://www.npmjs.com/package/dotenv)
+
+To setup and seed the database, type `npm run setup-dbs`, then `npm run seed`. 
 
 # Required Dependencies
 
